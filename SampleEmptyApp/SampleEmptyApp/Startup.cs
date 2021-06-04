@@ -62,10 +62,6 @@ namespace SampleEmptyApp
                         string result = System.Text.Encoding.UTF8.GetString(bytes);
                         await context.Response.WriteAsync(result);
                     }
-                    await context.Response.WriteAsync("<html><title>Hello World!</title></head>");
-                    await context.Response.WriteAsync("<body><h1>Hello World!</h1>");
-                    await context.Response.WriteAsync("<p>This is sample page.</p>");
-                    await context.Response.WriteAsync("</body></html>");
                 });
             });
         }
