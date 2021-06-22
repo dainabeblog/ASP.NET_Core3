@@ -1,0 +1,756 @@
+リスト3-1
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
+using SampleRazorApp.Models;
+
+
+namespace SampleRazorApp
+{
+    public class Startup
+    {
+        public Startup(IConfiguration configuration)
+        {
+            Configuration = configuration;
+        }
+
+
+        public IConfiguration Configuration { get; }
+
+
+        public void ConfigureServices(IServiceCollection services)
+        {
+            services.AddRazorPages();  // ☆
+        }
+
+
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        {
+            if (env.IsDevelopment())
+            {
+                app.UseDeveloperExceptionPage();
+            }
+            else
+            {
+                app.UseExceptionHandler("/Error");
+                app.UseHsts();
+            }
+
+
+            app.UseHttpsRedirection();
+            app.UseStaticFiles();
+
+
+            app.UseRouting();
+
+
+            app.UseAuthorization();
+
+
+            app.UseEndpoints(endpoints => // ☆
+            {
+                endpoints.MapRazorPages();
+            });
+        }
+    }
+}
+
+
+
+
+リスト3-2
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+
+
+
+
+リスト3-3
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.Extensions.Logging;
+
+
+namespace SampleRazorApp.Pages
+{
+    public class IndexModel : PageModel
+    {
+        private readonly ILogger<IndexModel> _logger;
+
+
+        public IndexModel(ILogger<IndexModel> logger)
+        {
+            _logger = logger;
+        }
+
+
+        public void OnGet()
+        {
+
+
+        }
+    }
+}
+
+
+
+
+リスト3-4
+@page
+@model SampleRazorApp.Pages.OtherModel
+@{
+}
+
+
+
+
+リスト3-5
+@page
+@model SampleRazorApp.Pages.OtherModel
+@{
+    ViewData["Title"] = "Other";
+}
+
+
+<h1>Other</h1>
+
+
+
+
+リスト3-6
+public void OnGet()
+{
+    ViewData["message"] = "This is sample message!";
+}
+
+
+
+
+リスト3-7
+<div>
+    <h1 class="display-4">Welcome</h1>
+    <p class="h4">@ViewData["message"]</p>
+</div>
+
+
+
+
+リスト3-8
+public class IndexModel : PageModel
+{
+    [ViewData]
+    public string Message { get; set; } = "sample message";
+
+
+    public void OnGet()
+    {
+        Message = "これは新たに設定されたメッセージです!!";
+    }
+}
+
+
+
+
+リスト3-9
+public class IndexModel : PageModel
+{
+    public string Message { get; set; } = "sample message";
+
+
+    public void OnGet()
+    {
+        Message = "これはMessageプロパティの値です。";
+    }
+}
+
+
+
+
+リスト3-10
+<div>
+    <h1 class="display-4">Welcome</h1>
+    <p class="h4">@Model.Message</p>
+</div>
+
+
+
+
+リスト3-11
+public class IndexModel : PageModel
+{
+    public string Message { get; set; } = "sample message";
+    private string Name = "no-name";
+    private string Mail = "no-mail";
+
+
+    public void OnGet()
+    {
+        Message = "これはMessageプロパティの値です。";
+    }
+
+
+    public string getData()
+    {
+        return "[名前：" + Name + ", メール：" + Mail + "]";
+    }
+}
+
+
+
+
+リスト3-12
+<div>
+    <h1 class="display-4">Welcome</h1>
+    <p class="h4">@Model.Message</p>
+    <p class="h5">@Model.getData()</p>
+</div>
+
+
+
+
+リスト3-13
+public class IndexModel : PageModel
+{
+    public string Message { get; set; } = "sample message";
+    private string[][] data = new string[][] {
+        new string[]{"Taro", "taro@yamada"},
+        new string[]{"Hanako", "hanako@flower"},
+        new string[]{"Sachiko", "sachiko@happy"}
+    };
+
+
+    [BindProperty(SupportsGet = true)]
+    public int id { get; set;  }
+
+
+    public void OnGet()
+    {
+        Message = "これはMessageプロパティの値です。";
+    }
+
+
+    public string getData(int id)
+    {
+        string[] target = data[id];
+        return "[名前：" + target[0] + ", メール：" + target[1] + "]";
+    }
+}
+
+
+
+
+リスト3-14
+<div>
+    <h1 class="display-4">Welcome</h1>
+    <p class="h4">@Model.Message</p>
+    <p class="h5">@Model.getData(Model.id)</p>
+</div>
+
+
+
+
+リスト3-15――Index.cshtml
+@page 
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+<div>
+    <h1 class="display-4 mb-4">Welcome</h1>
+    <p class="h4">@Model.Message</p>
+    <form asp-page="Other">
+        <input type="text" name="msg" class="form-control" />
+        <input type="submit" class="btn btn-primary" />
+    </form>
+</div>
+
+
+
+
+リスト3-16――IndexModelクラス
+public class IndexModel : PageModel
+{
+    public string Message { get; set; } = "sample message";
+
+
+    public void OnGet()
+    {
+        Message = "何か書いて下さい。";
+    }
+}
+
+
+
+
+リスト3-17
+public class OtherModel : PageModel
+{
+    public string Message { get; set; }
+
+
+    public void OnPost()
+    {
+        Message = "you typed: " + Request.Form["msg"];
+    }
+}
+
+
+
+
+リスト3-18
+@page
+@model SampleRazorApp.Pages.OtherModel
+@{
+    ViewData["Title"] = "Other";
+}
+
+
+<div>
+    <h1 class="display-4 mb-4">Other page</h1>
+    <p class="h4">@Model.Message</p>
+</div>
+
+
+
+
+リスト3-19
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+<div>
+    <h1 class="display-4 mb-4">Welcome</h1>
+    <p class="h4">@Model.Message</p>
+    <form asp-page="Index">
+        <div class="form-group">
+            <label asp-for="@Model.Name">Name</label>
+            <input asp-for="@Model.Name" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Password">Password</label>
+            <input asp-for="@Model.Password" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Mail">Mail</label>
+            <input asp-for="@Model.Mail" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="@Model.Tel">Tel</label>
+            <input asp-for="@Model.Tel" class="form-control" />
+        </div>
+            <input type="submit" class="btn btn-primary" />
+    </form>
+</div>
+
+
+
+
+リスト3-20
+// using System.ComponentModel.DataAnnotations;  追加
+
+
+public class IndexModel : PageModel
+{
+    public string Message = "no message.";
+    
+    [DataType(DataType.Text)]
+    public string Name { get; set; }
+    
+    [DataType(DataType.Password)]
+    public string Password { get; set; }
+    
+    [DataType(DataType.EmailAddress)]
+    public string Mail { get; set; }
+    
+    [DataType(DataType.PhoneNumber)]
+    public string Tel { get; set; }
+
+
+    public void OnGet()
+    {
+        Message = "入力して下さい。";
+    }
+    
+    public void OnPost(string name, string password, string mail, string tel)
+    {
+        Message = "[Name: " + name + ", password:(" + password.Length
+            + " chars), mail:" + mail + " <" + tel + ">]";
+    }
+}
+
+
+
+
+リスト3-21
+<div>
+    <h1 class="display-4 mb-4">Welcome</h1>
+    <p class="h4">@Model.Message</p>
+    <form asp-page="Index">
+        <div class="form-group">
+            @Html.DisplayName("Name")
+            @Html.Editor("Name", new { htmlAttributes = 
+                new { @class = "form-control" } })
+        </div>
+        <div class="form-group">
+            @Html.DisplayNameFor(model => model.Password)
+            @Html.EditorFor(model => model.Password, 
+                new { htmlAttributes = new { @class = "form-control" } })
+        </div>
+        <div class="form-group">
+            @Html.DisplayName("Mail")
+            @Html.TextBox("Mail", @Model.Mail, 
+                new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            @Html.DisplayName("Tel")
+            @Html.TextBoxFor(model=>model.Tel, 
+                new { @class = "form-control" })
+        </div>
+        <input type="submit" class="btn btn-primary" />
+    </form>
+        
+</div>
+
+
+
+
+リスト3-22
+namespace SampleRazorApp.Pages
+{
+    public enum Gender
+    {
+        male,
+        female
+    }
+    public enum Platform
+    {
+        Windows,
+        macOS,
+        Linux,
+        ChromeOS,
+        Android,
+        iOS
+    }
+    public class OtherModel : PageModel
+    {
+        public string Message { get; set; }
+
+
+        public bool check { get; set; }
+        public Gender gender { get; set; }
+        public Platform pc { get; set; }
+        public Platform[] pc2 { get; set; }
+
+
+        public void OnGet()
+        {
+            Message = "check & select it!";
+        }
+
+
+        public void OnPost(bool check, string gender, Platform pc, Platform[] pc2)
+        {
+            Message = "Result: " + check + "," + gender + "," + pc + ", " + pc2.Length;
+        }
+    }
+}
+
+
+
+
+リスト3-23
+<div>
+    <h1 class="display-4 mb-4">Other page</h1>
+    <p class="h4 mb-4">@Model.Message</p>
+    @using (Html.BeginForm())
+    {
+        <div class="form-group">
+            <label class="form-label h5">
+                @Html.CheckBox("check", true, 
+                    new { @class = "form-check-input" })
+                @Html.DisplayName("Checkbox1")
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="form-label h5">
+                @Html.RadioButton("gender", Gender.male, true, 
+                    new { @class = "form-check-input" })
+                @Html.DisplayName("male")
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="form-label h5">
+                @Html.RadioButton("gender", Gender.female, false, 
+                    new { @class = "form-check-input" })
+                @Html.DisplayName("female")
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="form-label h5">
+                @Html.DisplayName("PC")
+                @Html.DropDownList("pc", 
+                    new SelectList(Enum.GetValues(typeof(Platform))),
+                    new { @class = "form-control" })
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="form-label h5">
+                @Html.DisplayName("PC2")
+                @Html.ListBox("pc2", 
+                    new MultiSelectList(Enum.GetValues(typeof(Platform))),
+                    new { @class = "form-control", size = 5 })
+            </label>
+        </div>
+        <div><input type="submit" /></div>
+    }
+</div>
+
+
+
+
+リスト3-24
+<div>
+    <h1 class="display-4 mb-4">Other page</h1>
+    <p class="h4 mb-4">@Model.Message</p>
+    @using (Html.BeginForm())
+    {
+        <div class="form-group">
+            <label class="form-label h5">
+                @Html.CheckBoxFor(model => model.check, 
+                    new { @class = "form-check-input" })
+                @Html.DisplayName("Checkbox1")
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="form-check-label h5">
+                @Html.RadioButtonFor(model => model.gender, 
+                    Gender.male, new { @class = "form-check-input" })
+                @Html.DisplayName("male")
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="form-check-label h5">
+                @Html.RadioButtonFor(model => model.gender,
+                    Gender.female, new { @class = "form-check-input" })
+                @Html.DisplayName("female")
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="form-label h5">
+                @Html.DisplayName("PC")
+                @Html.DropDownListFor(model => model.pc, 
+                    new SelectList(Enum.GetValues(typeof(Platform))),
+                    new { @class = "form-control" })
+            </label>
+        </div>
+        <div class="form-group">
+            <label class="form-label h5">
+                @Html.DisplayName("PC2")
+                @Html.ListBoxFor(model => model.pc2, 
+                    new MultiSelectList(Enum.GetValues(typeof(Platform))),
+                    new { @class = "form-control", size = 5 })
+            </label>
+        </div>
+        <div><input type="submit" /></div>
+    }
+</div>
+
+
+
+
+リスト3-25
+<div>
+    <h1 class="display-4 mb-4">Welcome</h1>
+    <ul>
+        @{ 
+            int  totalp = 0;
+            int  totaln = 0;
+        }
+        @for (int i = 2; i <= 20; i++)
+        {
+            bool flg = true;
+            @for (int j = 2; j <= i / 2; j++)
+            {
+                @if (i % j == 0)
+                {
+                    flg = false;
+                }
+            }
+            @if (flg)
+            {
+                totalp += i;
+                <li>@i は、素数です。(total:@totalp)</li>
+            }
+            else
+            {
+                totaln += i;
+                <li>@i  は、素数ではない。[total:@totaln]</li>
+            }
+        }
+    </ul>
+</div>
+
+
+
+
+リスト3-26
+[BindProperty(SupportsGet = true)]
+public int Num { get; set; }
+
+
+
+
+リスト3-27
+@page "{num?}"
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+<div>
+    <h1 class="display-4 mb-4">Welcome</h1>
+    <p class="h4">@Model.Num  は、
+        <b>@(Model.Num % 2 == 0 ? "偶数" : "奇数") </b>です。</p>
+</div>
+
+
+
+
+リスト3-28
+<div>
+    <h1 class="display-4 mb-4">Welcome</h1>
+    <div class="h4">
+        @{
+            int n = Model.Num * 2;
+            ※整数 @Model.Num の２倍は、@n です。
+        }
+    </div>
+</div>
+
+
+
+
+リスト3-29
+@{
+    int n = Model.Num * 2;
+    <Text>※整数 @Model.Num の２倍は、@n です。</Text>
+}
+
+
+
+
+リスト3-30
+@page "{num?}"
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+@functions {
+    string hello(string name)
+    {
+        return "Hello, " + name + "!!";
+    }
+    int total(int n)
+    {
+        int re = 0;
+        for(int i = 1;i <= n;i++)
+        {
+            re += i;
+        }
+        return re;
+    }
+}
+<div>
+    <h1 class="display-4 mb-4">Welcome</h1>
+    <p class="h4">@hello("太郎")</p>
+    <p class="h4">@Model.Num の合計は、@total(Model.Num) 。</p>
+</div>
+
+
+
+
+リスト3-31
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+
+
+    string[] data = new[] {"one", "two", "three", "four", "five"};
+
+
+    Func<dynamic, object> hello = @<p class="display-4">Hello, @item !!</p>;
+
+
+    Func<dynamic, object> showList = @<ul class="h4">
+        @foreach (var ob in item)
+        {
+            <li>@ob</li>
+        }
+    </ul>;
+}
+
+
+<div>
+    <h1 class="display-4 mb-4">@hello("Hanako")</h1>
+    <p class="h4">@showList(data)</p>
+</div>
+
+
+
+
+リスト3-32
+@RenderSection("between", required: false)
+
+
+
+
+リスト3-33――Index.cshtml
+@section between
+{
+    <p class="container alert alert-primary">
+        ※これはヘッダーとコンテンツの間に表示されます。
+    </p>
+}
+
+
+
+
+リスト3-34――Other.cshtml
+@section between
+    {
+    <div class="container card" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title">※BETWEEN CONTENT</h5>
+            <p class="card-text">
+                これは、ヘッダー部分とページのコンテンツの間にある
+                Betweenセクションのコンテンツです。
+            </p>
+        </div>
+    </div>
+}

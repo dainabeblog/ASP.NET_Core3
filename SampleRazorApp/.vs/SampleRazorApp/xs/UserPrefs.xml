@@ -1,0 +1,34 @@
+﻿<Properties StartupConfiguration="{60069619-F0BB-4B30-8A17-3C3E0FACE2E4}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="SampleRazorApp/Pages/Other.cshtml">
+    <Files>
+      <File FileName="SampleRazorApp/Pages/Index.cshtml" Line="4" Column="37" />
+      <File FileName="SampleRazorApp/Pages/Index.cshtml.cs" Line="20" Column="34" />
+      <File FileName="SampleRazorApp/Pages/Other.cshtml" Line="8" Column="37" />
+      <File FileName="SampleRazorApp/Pages/Other.cshtml.cs" Line="15" Column="59" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="SampleRazorApp" expanded="True">
+            <Node name="SampleRazorApp" expanded="True">
+              <Node name="Pages" expanded="True">
+                <Node name="Index.cshtml" expanded="True" />
+                <Node name="Other.cshtml" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+      <Pad Id="MonoDevelop.Debugger.WatchPad">
+        <State />
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.SampleRazorApp PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

@@ -1,31 +1,30 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\S.Ymashiro\\github.com\\dainabeblog\\ASP.NetCore3\\SampleEmptyApp\\SampleEmptyApp\\SampleEmptyApp.csproj": {}
+    "/Users/watanabedaichi/Desktop/github.com/dainabeblog/ASP.NET_Core3/SampleEmptyApp/SampleEmptyApp/SampleEmptyApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\S.Ymashiro\\github.com\\dainabeblog\\ASP.NetCore3\\SampleEmptyApp\\SampleEmptyApp\\SampleEmptyApp.csproj": {
+    "/Users/watanabedaichi/Desktop/github.com/dainabeblog/ASP.NET_Core3/SampleEmptyApp/SampleEmptyApp/SampleEmptyApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\S.Ymashiro\\github.com\\dainabeblog\\ASP.NetCore3\\SampleEmptyApp\\SampleEmptyApp\\SampleEmptyApp.csproj",
+        "projectUniqueName": "/Users/watanabedaichi/Desktop/github.com/dainabeblog/ASP.NET_Core3/SampleEmptyApp/SampleEmptyApp/SampleEmptyApp.csproj",
         "projectName": "SampleEmptyApp",
-        "projectPath": "C:\\Users\\S.Ymashiro\\github.com\\dainabeblog\\ASP.NetCore3\\SampleEmptyApp\\SampleEmptyApp\\SampleEmptyApp.csproj",
-        "packagesPath": "C:\\Users\\S.Ymashiro\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\S.Ymashiro\\github.com\\dainabeblog\\ASP.NetCore3\\SampleEmptyApp\\SampleEmptyApp\\obj\\",
+        "projectPath": "/Users/watanabedaichi/Desktop/github.com/dainabeblog/ASP.NET_Core3/SampleEmptyApp/SampleEmptyApp/SampleEmptyApp.csproj",
+        "packagesPath": "/Users/watanabedaichi/.nuget/packages/",
+        "outputPath": "/Users/watanabedaichi/Desktop/github.com/dainabeblog/ASP.NET_Core3/SampleEmptyApp/SampleEmptyApp/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\S.Ymashiro\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/watanabedaichi/.config/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "netcoreapp3.1": {
+            "targetAlias": "netcoreapp3.1",
             "projectReferences": {}
           }
         },
@@ -37,6 +36,7 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "targetAlias": "netcoreapp3.1",
           "imports": [
             "net461",
             "net462",
@@ -55,7 +55,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/5.0.201/RuntimeIdentifierGraph.json"
         }
       }
     }

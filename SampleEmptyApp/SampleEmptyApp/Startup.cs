@@ -1,4 +1,4 @@
-using System;
+ï»¿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
-//ƒtƒ@ƒCƒ‹“Ç‚Ýž‚Ý—p
+//ãƒ•ã‚¡ã‚¤ãƒ«èª­ã¿è¾¼ã¿ç”¨
 using System.IO;
 
 
@@ -32,7 +32,7 @@ namespace SampleEmptyApp
 
             app.UseRouting();
 
-            //ŠÈˆÕ“I‚ÈHTML•\Ž¦ƒŠƒXƒg‚P|‚R
+            //ç°¡æ˜“çš„ãªHTMLè¡¨ç¤ºãƒªã‚¹ãƒˆï¼‘ï¼ï¼“
             //app.UseEndpoints(endpoints =>
             //{
             //    endpoints.MapGet("/", async context =>
@@ -45,10 +45,10 @@ namespace SampleEmptyApp
             //    });
             //});
 
-            //welcomeƒy[ƒW@ƒŠƒXƒg‚P|‚S
+            //welcomeãƒšãƒ¼ã‚¸ã€€ãƒªã‚¹ãƒˆï¼‘ï¼ï¼”
             //app.UseWelcomePage();
 
-            //‚Ó‚Ÿ‚¢‚é‚Ì“Ç‚Ýž‚ÝƒŠƒXƒg‚P|‚T
+            //ãµãã„ã‚‹ã®èª­ã¿è¾¼ã¿ãƒªã‚¹ãƒˆï¼‘ï¼ï¼•
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapGet("/", async context =>
