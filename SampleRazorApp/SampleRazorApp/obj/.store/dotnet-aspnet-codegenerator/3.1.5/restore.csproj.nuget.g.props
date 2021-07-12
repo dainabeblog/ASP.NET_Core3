@@ -1,0 +1,21 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <RestoreSuccess Condition=" '$(RestoreSuccess)' == '' ">True</RestoreSuccess>
+    <RestoreTool Condition=" '$(RestoreTool)' == '' ">NuGet</RestoreTool>
+    <ProjectAssetsFile Condition=" '$(ProjectAssetsFile)' == '' ">$(MSBuildThisFileDirectory)project.assets.json</ProjectAssetsFile>
+    <NuGetPackageRoot Condition=" '$(NuGetPackageRoot)' == '' ">/Users/watanabedaichi/Desktop/github.com/dainabeblog/ASP.NET_Core3/SampleRazorApp/SampleRazorApp/obj/.store/.stage/t0nyphmy.ctn</NuGetPackageRoot>
+    <NuGetPackageFolders Condition=" '$(NuGetPackageFolders)' == '' ">/Users/watanabedaichi/Desktop/github.com/dainabeblog/ASP.NET_Core3/SampleRazorApp/SampleRazorApp/obj/.store/.stage/t0nyphmy.ctn</NuGetPackageFolders>
+    <NuGetProjectStyle Condition=" '$(NuGetProjectStyle)' == '' ">DotnetToolReference</NuGetProjectStyle>
+    <NuGetToolVersion Condition=" '$(NuGetToolVersion)' == '' ">5.10.0</NuGetToolVersion>
+  </PropertyGroup>
+  <ItemGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <SourceRoot Include="/Users/watanabedaichi/Desktop/github.com/dainabeblog/ASP.NET_Core3/SampleRazorApp/SampleRazorApp/obj/.store/.stage/t0nyphmy.ctn/" />
+  </ItemGroup>
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
+    <Pkgdotnet-aspnet-codegenerator Condition=" '$(Pkgdotnet-aspnet-codegenerator)' == '' ">/Users/watanabedaichi/Desktop/github.com/dainabeblog/ASP.NET_Core3/SampleRazorApp/SampleRazorApp/obj/.store/.stage/t0nyphmy.ctn/dotnet-aspnet-codegenerator/3.1.5</Pkgdotnet-aspnet-codegenerator>
+  </PropertyGroup>
+</Project>

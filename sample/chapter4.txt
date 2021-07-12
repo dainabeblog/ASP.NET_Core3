@@ -1,0 +1,999 @@
+リスト4-1
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+
+namespace SampleMVCApp.Models
+{
+    public class Person
+    {
+    }
+}
+
+
+
+
+リスト4-2
+public class Person
+{
+    public int PersonId { get; set; }
+    public string Name { get; set; }
+    public string Mail { get; set; }
+    public int Age { get; set; }
+}
+
+
+
+
+リスト4-3
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.0</TargetFramework>
+  </PropertyGroup>
+
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="3.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.0.0" />
+  </ItemGroup>
+
+
+</Project>
+
+
+
+
+リスト4-4
+CREATE TABLE "Person" (
+        "PersonId"        INTEGER PRIMARY KEY AUTOINCREMENT,
+        "Name"        TEXT NOT NULL,
+        "Mail"        TEXT,
+        "Age"        INTEGER
+)
+
+
+
+
+リスト4-5
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
+
+namespace SampleMVCApp.Models
+{
+    public class SampleMVCAppContext : DbContext
+    {
+        public SampleMVCAppContext (DbContextOptions
+            <SampleMVCAppContext> options)
+            : base(options)
+        {
+        }
+
+
+        public DbSet<SampleMVCApp.Models.Person> Person { get; set; }
+    }
+}
+
+
+
+
+リスト4-6
+// using Microsoft.EntityFrameworkCore; 追加
+// using SampleMVCApp.Models; 追加
+
+
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddSession();
+    services.AddControllersWithViews();
+
+
+    // ☆Dbコンテキストを追加
+    services.AddDbContext<SampleMVCAppContext>(options =>
+        options.UseSqlServer(
+            Configuration.GetConnectionString("SampleMVCAppContext")));
+}
+
+
+
+
+リスト4-7
+"ConnectionStrings": {
+  "SampleMVCAppContext": 
+    "Server=(localdb)\\mssqllocaldb;Database=SampleMVCAppContext-…略…;Trusted_Connection=True;MultipleActiveResultSets=true"
+}
+
+
+
+
+リスト4-8
+"ConnectionStrings": {
+    "SampleMVCAppContext": "Data Source=mydata.db"
+}
+
+
+
+
+リスト4-9
+services.AddDbContext<SampleMVCAppContext>(options =>
+   options.UseSqlite(Configuration.GetConnectionString("SampleMVCAppContext")));
+}
+
+
+
+
+リスト4-10
+  "ConnectionStrings": {
+    "SampleMVCAppContext": "server=127.0.0.1;port=3306;database=データベース;userid=利用者;password=パスワード"
+  }
+
+
+
+
+リスト4-11
+services.AddDbContext<SampleMVCAppContext>(options =>
+   options.UseMySql(Configuration.GetConnectionString("SampleMVCAppContext")));
+}
+
+
+
+
+リスト4-12
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SampleMVCApp.Models;
+
+
+namespace SampleMVCApp.Controllers
+{
+    public class PeopleController : Controller
+    {
+        private readonly SampleMVCAppContext _context;
+
+
+        public PeopleController(SampleMVCAppContext context)
+        {
+            _context = context;
+        }
+
+
+        ……アクションメソッド……
+    }
+}
+
+
+
+
+リスト4-13
+public async Task<IActionResult> Index()
+{
+    return View(await _context.Person.ToListAsync());
+}
+
+
+
+
+リスト4-14
+@model IEnumerable<SampleMVCApp.Models.Person>
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+
+<h1>Index</h1>
+
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Mail)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Age)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Name)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Mail)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Age)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.PersonId">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.PersonId">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.PersonId">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+
+
+
+リスト4-15
+@model SampleMVCApp.Models.Person
+
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+
+<h1>Create</h1>
+
+
+<h4>Person</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mail" class="control-label"></label>
+                <input asp-for="Mail" class="form-control" />
+                <span asp-validation-for="Mail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Age" class="control-label"></label>
+                <input asp-for="Age" class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+
+
+リスト4-16――Createメソッド（GET用）
+public IActionResult Create()
+{
+    return View();
+}
+
+
+
+
+リスト4-17――Createメソッド（POST用）
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Create
+    ([Bind("PersonId,Name,Mail,Age")] Person person)
+{
+    if (ModelState.IsValid)
+    {
+        _context.Add(person);
+        await _context.SaveChangesAsync();
+        return RedirectToAction(nameof(Index));
+    }
+    return View(person);
+}
+
+
+
+
+リスト4-18
+@model SampleMVCApp.Models.Person
+
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+
+<h1>Details</h1>
+
+
+<div>
+    <h4>Person</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Mail)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Mail)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Age)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Age)
+        </dd>
+    </dl>
+</div>
+<div>
+    <a asp-action="Edit" asp-route-id="@Model.PersonId">Edit</a> |
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+
+
+リスト4-19
+public async Task<IActionResult> Details(int? id)
+{
+    if (id == null)
+    {
+        return NotFound();
+    }
+
+
+    var person = await _context.Person
+        .FirstOrDefaultAsync(m => m.PersonId == id);
+    if (person == null)
+    {
+        return NotFound();
+    }
+
+
+    return View(person);
+}
+
+
+
+
+リスト4-20
+@model SampleMVCApp.Models.Person
+
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+
+<h1>Edit</h1>
+
+
+<h4>Person</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="PersonId" />
+            <div class="form-group">
+                <label asp-for="Name" class="control-label"></label>
+                <input asp-for="Name" class="form-control" />
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mail" class="control-label"></label>
+                <input asp-for="Mail" class="form-control" />
+                <span asp-validation-for="Mail" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Age" class="control-label"></label>
+                <input asp-for="Age" class="form-control" />
+                <span asp-validation-for="Age" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+
+
+
+public async Task<IActionResult> Edit(int? id)
+{
+    if (id == null)
+    {
+        return NotFound();
+    }
+
+
+    var person = await _context.Person.FindAsync(id);
+    if (person == null)
+    {
+        return NotFound();
+    }
+    return View(person);
+}
+
+
+
+
+リスト4-22
+[HttpPost]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> Edit(int id, 
+        [Bind("PersonId,Name,Mail,Age")] Person person)
+{
+    if (id != person.PersonId)
+    {
+        return NotFound();
+    }
+
+
+    if (ModelState.IsValid)
+    {
+        try
+        {
+            _context.Update(person);
+            await _context.SaveChangesAsync();
+        }
+        catch (DbUpdateConcurrencyException)
+        {
+            if (!PersonExists(person.PersonId))
+            {
+                return NotFound();
+            }
+            else
+            {
+                throw;
+            }
+        }
+        return RedirectToAction(nameof(Index));
+    }
+    return View(person);
+}
+
+
+
+
+リスト4-23
+@model SampleMVCApp.Models.Person
+
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+
+<h1>Delete</h1>
+
+
+<h3>Are you sure you want to delete this?</h3>
+<div>
+    <h4>Person</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Name)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Name)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Mail)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Mail)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Age)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Age)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="PersonId" />
+        <input type="submit" value="Delete" class="btn btn-danger" /> |
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>
+
+
+
+
+リスト4-24
+public async Task<IActionResult> Delete(int? id)
+{
+    if (id == null)
+    {
+        return NotFound();
+    }
+
+
+    var person = await _context.Person
+        .FirstOrDefaultAsync(m => m.PersonId == id);
+    if (person == null)
+    {
+        return NotFound();
+    }
+
+
+    return View(person);
+}
+
+
+
+
+リスト4-25
+[HttpPost, ActionName("Delete")]
+[ValidateAntiForgeryToken]
+public async Task<IActionResult> DeleteConfirmed(int id)
+{
+    var person = await _context.Person.FindAsync(id);
+    _context.Person.Remove(person);
+    await _context.SaveChangesAsync();
+    return RedirectToAction(nameof(Index));
+}
+
+
+
+
+リスト4-26
+private bool PersonExists(int id)
+{
+    return _context.Person.Any(e => e.PersonId == id);
+}
+
+
+
+
+リスト4-27
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+
+
+namespace SampleRazorApp.Models
+{
+    public class Person
+    {
+        public int PersonId { get; set; }
+        public string Name { get; set; }
+        public string Mail { get; set; }
+        public int Age { get; set; }
+    }
+}
+
+
+
+
+リスト4-28
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddRazorPages();
+
+
+    // ☆Dbコンテキストの追加
+    services.AddDbContext<SampleRazorAppContext>(options =>
+            options.UseSqlServer(Configuration.GetConnectionString
+                    ("SampleRazorAppContext")));
+}
+
+
+
+
+リスト4-29
+services.AddDbContext<SampleRazorAppContext>(options =>
+        options.UseSqlite(Configuration.GetConnectionString
+                ("SampleRazorAppContextSqlite")));
+
+
+
+
+リスト4-30
+  "ConnectionStrings": {
+    "SampleRazorAppContext": 
+        "Server=(localdb)\\mssqllocaldb;Database=SampleRazorAppContext-…略…;Trusted_Connection=True;MultipleActiveResultSets=true"
+  }
+
+
+
+
+リスト4-31
+  "ConnectionStrings": {
+    "SampleRazorAppContext": "Data Source=mydata.db"
+  }
+
+
+
+
+リスト4-32
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+
+
+namespace SampleRazorApp.Models
+{
+    public class SampleRazorAppContext : DbContext
+    {
+        public SampleRazorAppContext (DbContextOptions
+            <SampleRazorAppContext> options)
+            : base(options)
+        {
+        }
+
+
+        public DbSet<SampleRazorApp.Models.Person> Person { get; set; }
+    }
+}
+
+
+
+
+リスト4-33
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using SampleRazorApp.Models;
+
+
+namespace SampleRazorApp.Pages
+{
+    public class IndexModel : PageModel
+    {
+        private readonly SampleRazorAppContext _context;
+
+
+        public IndexModel(SampleRazorAppContext context)
+        {
+            _context = context;
+        }
+
+
+        public IList<Person> Person { get;set; }
+
+
+        public async Task OnGetAsync()
+        {
+            Person = await _context.Person.ToListAsync();
+        }
+    }
+}
+
+
+
+
+リスト4-34
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using SampleRazorApp.Models;
+
+
+namespace SampleRazorApp.Pages
+{
+    public class CreateModel : PageModel
+    {
+        private readonly SampleRazorAppContext _context;
+
+
+        public CreateModel(SampleRazorAppContext context)
+        {
+            _context = context;
+        }
+
+
+        public IActionResult OnGet()
+        {
+            return Page();
+        }
+
+
+        [BindProperty]
+        public Person Person { get; set; }
+
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+
+            _context.Person.Add(Person);
+            await _context.SaveChangesAsync();
+
+
+            return RedirectToPage("./Index");
+        }
+    }
+}
+
+
+
+
+リスト4-35
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using SampleRazorApp.Models;
+
+
+namespace SampleRazorApp.Pages
+{
+    public class DetailsModel : PageModel
+    {
+        private readonly SampleRazorAppContext _context;
+
+
+        public DetailsModel(SampleRazorAppContext context)
+        {
+            _context = context;
+        }
+
+
+        public Person Person { get; set; }
+
+
+        public async Task<IActionResult> OnGetAsync(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            Person = await _context.Person.FirstOrDefaultAsync
+                    (m => m.PersonId == id);
+
+
+            if (Person == null)
+            {
+                return NotFound();
+            }
+            return Page();
+        }
+    }
+}
+
+
+
+
+リスト4-36
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SampleRazorApp.Models;
+
+
+namespace SampleRazorApp.Pages
+{
+    public class EditModel : PageModel
+    {
+        private readonly SampleRazorAppContext _context;
+
+
+        public EditModel(SampleRazorAppContext context)
+        {
+            _context = context;
+        }
+
+
+        [BindProperty]
+        public Person Person { get; set; }
+
+
+        public async Task<IActionResult> OnGetAsync(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            Person = await _context.Person.FirstOrDefaultAsync
+                    (m => m.PersonId == id);
+
+
+            if (Person == null)
+            {
+                return NotFound();
+            }
+            return Page();
+        }
+
+
+        public async Task<IActionResult> OnPostAsync()
+        {
+            if (!ModelState.IsValid)
+            {
+                return Page();
+            }
+
+
+            _context.Attach(Person).State = EntityState.Modified;
+
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!PersonExists(Person.PersonId))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+
+            return RedirectToPage("./Index");
+        }
+
+
+        private bool PersonExists(int id)
+        {
+            return _context.Person.Any(e => e.PersonId == id);
+        }
+    }
+}
+
+
+
+
+リスト4-37
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using Microsoft.EntityFrameworkCore;
+using SampleRazorApp.Models;
+
+
+namespace SampleRazorApp.Pages
+{
+    public class DeleteModel : PageModel
+    {
+        private readonly SampleRazorAppContext _context;
+
+
+        public DeleteModel(SampleRazorAppContext context)
+        {
+            _context = context;
+        }
+
+
+        [BindProperty]
+        public Person Person { get; set; }
+
+
+        public async Task<IActionResult> OnGetAsync(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            Person = await _context.Person.FirstOrDefaultAsync
+                    (m => m.PersonId == id);
+
+
+            if (Person == null)
+            {
+                return NotFound();
+            }
+            return Page();
+        }
+
+
+        public async Task<IActionResult> OnPostAsync(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+
+            Person = await _context.Person.FindAsync(id);
+
+
+            if (Person != null)
+            {
+                _context.Person.Remove(Person);
+                await _context.SaveChangesAsync();
+            }
+
+
+            return RedirectToPage("./Index");
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
