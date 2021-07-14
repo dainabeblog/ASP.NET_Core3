@@ -15,6 +15,26 @@ namespace SampleRazorApp.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "5.0.7");
 
+            modelBuilder.Entity("SampleRazorApp.Models.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("Comment")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Message");
+                });
+
             modelBuilder.Entity("SampleRazorApp.Models.Person", b =>
                 {
                     b.Property<int>("PersonId")
@@ -28,11 +48,28 @@ namespace SampleRazorApp.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Name")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("PersonId");
 
                     b.ToTable("Person");
+                });
+
+            modelBuilder.Entity("SampleRazorApp.Models.Message", b =>
+                {
+                    b.HasOne("SampleRazorApp.Models.Person", "Person")
+                        .WithMany("Messages")
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("SampleRazorApp.Models.Person", b =>
+                {
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

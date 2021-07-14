@@ -24,9 +24,11 @@
     <None Remove="Microsoft.VisualStudio.Web.CodeGeneration.Design" />
     <None Remove="Microsoft.EntityFrameworkCore.Tools" />
     <None Remove="Pages\Controllers\" />
+    <None Remove="Pages\Msg\" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />
     <Folder Include="Pages\Controllers\" />
+    <Folder Include="Pages\Msg\" />
   </ItemGroup>
 </Project>
