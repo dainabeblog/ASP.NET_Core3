@@ -1,8 +1,8 @@
 ﻿<Properties StartupConfiguration="{60069619-F0BB-4B30-8A17-3C3E0FACE2E4}|Default">
-  <MonoDevelop.Ide.Workbench ActiveDocument="SampleRazorApp/Models/Person.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="SampleRazorApp/Pages/Msg/Index.cshtml">
     <Files>
       <File FileName="SampleRazorApp/Pages/Find.cshtml.cs" Line="31" Column="78" />
-      <File FileName="SampleRazorApp/Pages/Msg/Index.cshtml" Line="18" Column="18" />
+      <File FileName="SampleRazorApp/Pages/Msg/Index.cshtml" Line="8" Column="15" />
       <File FileName="SampleRazorApp/Pages/Msg/Index.cshtml.cs" Line="24" Column="10" />
       <File FileName="SampleRazorApp/Pages/Msg/Create.cshtml.cs" Line="39" Column="95" />
       <File FileName="SampleRazorApp/Pages/Controllers/Index.cshtml" Line="39" Column="17" />
@@ -10,7 +10,7 @@
       <File FileName="SampleRazorApp/SampleRazorAppContext-143be017-4573-46cf-a538-498d7b96b8ce.db" />
       <File FileName="SampleRazorApp/Data/SampleRazorAppContext.cs" Line="23" Column="71" />
       <File FileName="SampleRazorApp/Startup.cs" Line="1" Column="1" />
-      <File FileName="SampleRazorApp/Models/Message.cs" Line="1" Column="1" />
+      <File FileName="SampleRazorApp/Models/Message.cs" Line="11" Column="6" />
       <File FileName="SampleRazorApp/Models/Person.cs" Line="1" Column="1" />
     </Files>
     <Pads>
@@ -19,14 +19,15 @@
           <Node name="SampleRazorApp" expanded="True">
             <Node name="SampleRazorApp" expanded="True">
               <Node name="Data" expanded="True" />
-              <Node name="Models" expanded="True">
-                <Node name="Person.cs" selected="True" />
-              </Node>
+              <Node name="Models" expanded="True" />
               <Node name="Pages" expanded="True">
-                <Node name="Msg" expanded="True">
-                  <Node name="Create.cshtml" expanded="True" />
+                <Node name="Controllers" expanded="True">
                   <Node name="Index.cshtml" expanded="True" />
                 </Node>
+                <Node name="Msg" expanded="True">
+                  <Node name="Index.cshtml" expanded="True" selected="True" />
+                </Node>
+                <Node name="Shared" expanded="True" />
               </Node>
             </Node>
           </Node>

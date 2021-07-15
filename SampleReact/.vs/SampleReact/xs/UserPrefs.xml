@@ -1,0 +1,41 @@
+﻿<Properties StartupConfiguration="{9D483607-B034-4DF6-834B-3F5BE4F084F2}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="SampleReact/Controllers/WeatherForecastController.cs">
+    <Files>
+      <File FileName="SampleReact/ClientApp/src/components/Home.js" Line="1" Column="1" />
+      <File FileName="SampleReact/ClientApp/src/index.js" Line="1" Column="1" />
+      <File FileName="SampleReact/ClientApp/public/index.html" Line="1" Column="1" />
+      <File FileName="SampleReact/ClientApp/src/App.js" Line="1" Column="1" />
+      <File FileName="SampleReact/ClientApp/src/components/Counter.js" Line="1" Column="1" />
+      <File FileName="SampleReact/ClientApp/src/components/FetchData.js" Line="13" Column="4" />
+      <File FileName="SampleReact/Controllers/WeatherForecastController.cs" Line="5" Column="32" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="SampleReact" expanded="True">
+            <Node name="SampleReact" expanded="True">
+              <Node name="ClientApp" expanded="True">
+                <Node name="public" expanded="True" />
+                <Node name="src" expanded="True">
+                  <Node name="components" expanded="True" />
+                </Node>
+              </Node>
+              <Node name="Controllers" expanded="True">
+                <Node name="WeatherForecastController.cs" selected="True" />
+              </Node>
+              <Node name="Pages" expanded="True" />
+              <Node name="Properties" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.ItemProperties.SampleReact PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+</Properties>

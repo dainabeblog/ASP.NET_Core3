@@ -27,7 +27,7 @@
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Comment)
-                (@Model._context.Entry(item).Property("Posted").CurrentValue
+                (@Model._context.Entry(item).Property("Posted").CurrentValue)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Person.Name)

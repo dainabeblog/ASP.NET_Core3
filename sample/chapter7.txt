@@ -1,0 +1,814 @@
+﻿リスト7-1
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(
+            Configuration.GetConnectionString("DefaultConnection")));
+
+
+    // ☆Identityの追加
+    services.AddDefaultIdentity<IdentityUser>(options => 
+        options.SignIn.RequireConfirmedAccount = true)
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+    services.AddRazorPages();
+}
+
+
+
+
+リスト7-2
+app.UseAuthentication();
+app.UseAuthorization();
+
+
+
+
+リスト7-3
+public class ApplicationDbContext : IdentityDbContext
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
+        : base(options)
+    {
+    }
+}
+
+
+
+
+リスト7-4
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(
+            Configuration.GetConnectionString("DefaultConnection")));
+
+
+    services.AddDefaultIdentity<IdentityUser>(options => 
+        options.SignIn.RequireConfirmedAccount = false)
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+    services.AddRazorPages().AddRazorPagesOptions(options =>
+        {
+            options.Conventions.AuthorizePage("/Privacy");
+        });
+}
+
+
+リスト7-5
+// using Microsoft.AspNetCore.Authorization; 追記
+
+
+[Authorize]
+public IActionResult Privacy()
+{
+    return View();
+}
+
+
+
+
+リスト7-6
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">
+        building Web apps with ASP.NET Core</a>.</p>
+    <!--☆以下、追記-->
+    <p class="h4">ID: 
+        @(User.Identity.Name==null ? "no-data" : User.Identity.Name)
+        @(User.Identity.IsAuthenticated + "/" 
+                + User.Identity.AuthenticationType)</p>
+</div>
+
+
+
+
+リスト7-7
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddDbContext<ApplicationDbContext>(options =>
+        options.UseSqlServer(
+            Configuration.GetConnectionString("DefaultConnection")));
+
+
+    services.AddDefaultIdentity<IdentityUser>(options => 
+        options.SignIn.RequireConfirmedAccount = false)
+            .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
+    // ☆Google認証の追加
+    services.AddAuthentication()
+        .AddGoogle(options =>
+        {
+            IConfigurationSection googleAuthNSection =
+                Configuration.GetSection("Authentication:Google");
+
+
+            options.ClientId = googleAuthNSection["ClientId"];
+            options.ClientSecret = googleAuthNSection["ClientSecret"];
+        });
+
+
+    services.AddRazorPages();
+}
+
+
+
+
+リスト7-8
+private static void Hello(IApplicationBuilder app)
+{
+    app.Run(async context =>
+    {
+        await context.Response.WriteAsync("Hello!");
+    });
+}
+
+
+private static void Bye(IApplicationBuilder app)
+{
+    app.Run(async context =>
+    {
+        await context.Response.WriteAsync("Good-Bye!");
+    });
+}
+
+
+
+
+リスト7-9
+app.Map("/map1", Hello);
+app.Map("/map2", Bye);
+
+
+
+
+リスト7-10
+app.Map("/map1", Hello);
+app.Run(async context =>
+{
+    await context.Response.WriteAsync("Run!");
+});
+app.Map("/map2", Bye);
+
+
+
+
+リスト7-11
+app.Map("/map1", Hello);
+app.Use(async (context , next) =>
+{
+    await context.Response.WriteAsync("Use 1 !");
+    await next();
+});
+app.Map("/map2", Bye);
+
+
+
+
+リスト7-12
+// using Microsoft.AspNetCore.Http; // 追記
+
+
+public class SampleMiddleware
+{
+    private readonly RequestDelegate _next;
+
+
+    public SampleMiddleware(RequestDelegate next)
+    {
+        _next = next;
+    }
+
+
+    public async Task InvokeAsync(HttpContext context)
+    {
+        SampleData data = new SampleData(
+                "YAMADA-Taro", "taro@yamada", "999-9999");
+        context.Session.SetString("SampleData", data.ToString());
+        await _next(context);
+    }
+}
+
+
+public class SampleData
+{
+    public string Name { get; set; }
+    public string Mail { get; set; }
+    public string Tel { get; set; }
+
+
+    public SampleData(string name, string mail, string tel)
+    {
+        Name = name;
+        Mail = mail;
+        Tel = tel;
+    }
+
+
+    public override string ToString()
+    {
+        return "{ " + Name + ", " + Mail + ", " + Tel + " }";
+    }
+}
+
+
+
+
+リスト7-13
+public static class SampleMiddlewareExtensions
+{
+    public static IApplicationBuilder UseSample(
+        this IApplicationBuilder builder)
+    {
+        return builder.UseMiddleware<SampleMiddleware>();
+    }
+}
+
+
+
+
+リスト7-14
+services.AddSession();
+
+
+
+
+リスト7-15
+app.UseSession();
+app.UseSample();
+
+
+
+
+リスト7-16
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+
+namespace SampleAuthApp.Pages
+{
+    public class IndexModel : PageModel
+    {
+        private readonly ILogger<IndexModel> _logger;
+        public string SampleData { get; set; };
+
+
+        public IndexModel(ILogger<IndexModel> logger)
+        {
+            _logger = logger;
+        }
+
+
+        public void OnGet()
+        {
+            SampleData = HttpContext.Session.GetString("SampleData");
+        }
+
+
+    }
+}
+
+
+
+
+リスト7-17
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p class="h4">@Model.SampleData</p>
+</div>
+
+
+
+
+リスト7-18
+// インターフェイス
+public interface ISampleDependency
+{
+    public SampleData getData();
+}
+
+
+// 実装クラス
+public class SampleDependency : ISampleDependency
+{
+    private List<SampleData> _data;
+
+
+    public SampleDependency()
+    {
+        _data = new List<SampleData>();
+        _data.Add(new SampleData("YAMADA-Taro", "taro@yamda", "999-9999"));
+        _data.Add(new SampleData("Tanaka-Hanako", "hanako@flwer", "888-888"));
+        _data.Add(new SampleData("Ito-Sachiko", "sachico@happy", "777-7777"));
+        _data.Add(new SampleData("Oda-mami", "mami@mumemo", "666-6666"));
+        _data.Add(new SampleData("Nakamura-Jiro", "jiro@change", "555-5555"));
+    }
+
+
+    public SampleData getData()
+    {
+        int n = new Random().Next(_data.Count());
+        return _data[n];
+    }
+}
+
+
+
+
+リスト7-19
+services.AddScoped<ISampleDependency, SampleDependency>();
+
+
+
+
+リスト7-20
+services.AddSingleton<ISampleDependency, SampleDependency>();
+
+
+
+
+リスト7-21
+using Microsoft.AspNetCore.Mvc.RazorPages;
+
+
+namespace SampleAuthApp.Pages
+{
+    public class IndexModel : PageModel
+    {
+        private ISampleDependency _sample;
+        public string SampleData;
+
+
+        public IndexModel(ISampleDependency sample)
+        {
+            _sample = sample;
+        }
+
+
+        public void OnGet()
+        {
+            SampleData = _sample.getData().ToString();
+        }
+
+
+    }
+}
+
+
+
+
+リスト7-22
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+
+
+namespace SampleAuthApp.TagHelpers
+{
+    public class SampleTagHelper : TagHelper
+    {
+        public override void Process(TagHelperContext context, TagHelperOutput output)
+        {
+            output.TagName = "h3";
+            output.Content.SetContent("This is Sample Tag Helper!!");
+        }
+    }
+}
+
+
+
+
+リスト7-23
+@using Microsoft.AspNetCore.Identity
+@using SampleAuthApp
+@using SampleAuthApp.Data
+@using SampleAuthApp.TagHelpers // ☆
+
+
+@namespace SampleAuthApp.Pages
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+
+
+@addTagHelper *, SampleAuthApp // ☆
+
+
+
+
+リスト7-24
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <sample></sample>
+</div>
+
+
+
+
+リスト7-25
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+
+
+namespace SampleAuthApp.TagHelpers
+{
+    public class SampleTagHelper : TagHelper
+    {
+        public override async Task ProcessAsync(TagHelperContext context, 
+                TagHelperOutput output)
+        {
+            output.TagName = "h3";
+            TagHelperContent child = await output.GetChildContentAsync();
+            string content = child.GetContent();
+            output.Content.SetHtmlContent(content.ToUpper());
+        }
+    }
+}
+
+
+
+
+リスト7-26
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <sample>This is <span style="color:red">
+        Sample</span>.</sample>
+</div>
+
+
+
+
+リスト7-27
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+
+
+namespace SampleAuthApp.TagHelpers
+{
+    public class SampleTagHelper : TagHelper
+    {
+        public string color { get; set; }
+        public string bgColor { get; set; }
+
+
+        public override async Task ProcessAsync(TagHelperContext context, 
+                TagHelperOutput output)
+        {
+            output.TagName = "h3";
+            string c = color != null ? color : "black";
+            string bc = bgColor != null ? bgColor : "white";
+            string style = "color:" + c + "; background:" + bc;
+            output.Attributes.SetAttribute("style", style);
+            TagHelperContent child = await output.GetChildContentAsync();
+            string content = child.GetContent();
+            output.Content.SetHtmlContent(content.ToUpper());
+        }
+    }
+}
+
+
+
+
+リスト7-28
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <sample>Plain sample.</sample>
+    <sample color="magenta">Color sample</sample>
+    <sample bg-color="yellow">Bg sample</sample>
+    <sample color="white" bg-color="blue">Both sample</sample>
+</div>
+
+
+
+
+リスト7-29
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+
+
+namespace SampleAuthApp.TagHelpers
+{
+    public class SampleTagHelper : TagHelper
+    {
+        public List<string> items { get; set; }
+
+
+        public override void Process(TagHelperContext context, 
+                TagHelperOutput output)
+        {
+            if (items == null)
+            {
+                output.TagName = "p";
+                output.Content.SetContent("*** no-data ***");
+                return;
+            }
+            output.TagName = "ul";
+            output.Attributes.SetAttribute("style", "text-align:left; font-size:20pt;");
+            output.Content.Clear();
+
+
+            foreach (var item in items)
+            {
+                output.Content.AppendHtml("<li>" + item + "</li>");
+            }
+        }
+    }
+}
+
+
+
+
+リスト7-30
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+
+
+    var data = new List<string>();
+    data.Add("One");
+    data.Add("Two");
+    data.Add("Three");
+    data.Add("Four");
+    data.Add("Five");
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <sample items="@data"></sample>
+</div>
+
+
+
+
+リスト7-31
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Razor.TagHelpers;
+
+
+namespace SampleAuthApp.TagHelpers
+{
+    [HtmlTargetElement(Attributes = "sample")]
+    public class SampleTagHelper : TagHelper
+    {
+        public override void Process(TagHelperContext context, 
+                TagHelperOutput output)
+        {
+            var attr = new TagHelperAttribute("sample");
+            output.Attributes.TryGetAttribute("sample", out attr);
+            output.Attributes.RemoveAll("sample");
+            output.Attributes.SetAttribute("style", "background-color:" + attr.Value);
+        }
+    }
+}
+
+
+
+
+リスト7-32
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <div class="h3">
+        <p>
+            This is <span sample="yellow">
+                Sample Attribute
+            </span>. ok?
+        </p>
+        <p>
+            これは、<span sample="red">
+                サンプルの属性
+            </span>を使った例です。
+        </p>
+    </div>
+</div>
+
+
+
+
+リスト7-33
+// using System.ComponentModel.DataAnnotations; // 追記
+
+
+public class FormData
+{
+    [Required]
+    public string Name { get; set; }
+    public string Message { get; set; }
+
+
+    public FormData()
+    {
+        Name = "";
+        Message = "";
+    }
+
+
+    public FormData(string name, string msg)
+    {
+        Name = name;
+        Message = msg;
+    }
+        public override string ToString()
+    {
+        return "{ " + Name + ", \"" + Message + "\" }";
+    }
+}
+
+
+
+
+リスト7-34
+public class MsgAttribute : ValidationAttribute
+{
+
+
+    protected override ValidationResult IsValid(
+            object value, ValidationContext validationContext)
+    {
+        string val = (string)value;
+            
+        if (val == null)
+        {
+            return new ValidationResult("NULL STRING!");
+        }
+        return ValidationResult.Success;
+    }
+
+
+}
+
+
+
+
+リスト7-35
+[Msg]
+public string Message { get; set; }
+
+
+
+
+リスト7-36
+public class IndexModel : PageModel
+{
+    [BindProperty]
+    public FormData sampleData { get; set; }
+    public string msg;
+
+
+    public void OnGet()
+    {
+        msg = "input form:";
+    }
+
+
+    public IActionResult OnPost()
+    {
+        if (!ModelState.IsValid)
+        {
+            msg = "re-input form:";
+        } else
+        {
+            msg = sampleData.ToString();
+        }
+        return Page();
+    }
+
+
+}
+
+
+
+
+リスト7-37
+@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <div class="text-left">
+        <p class="h4 mb-4">@Model.msg</p>
+        <form asp-page="Index">
+            <div asp-validation-summary="All" 
+                    class="text-danger"></div>
+            <div><input asp-for="sampleData.Name" 
+                    class="form-control" /></div>
+            <div><input asp-for="sampleData.Message" 
+                    class="form-control" /></div>
+            <div><input type="submit" 
+                    class="btn btn-primary" /></div>
+        </form>
+    </div>
+</div>
+
+
+
+
+リスト7-38
+public class MsgAttribute : ValidationAttribute
+{
+
+
+    public int Min { get; set; }
+    public string Ban { get; set; }
+
+
+    protected override ValidationResult IsValid(
+            object value, ValidationContext validationContext)
+    {
+        string val = (string)value;
+            
+        if (val == null)
+        {
+            return new ValidationResult("NULL STRING!");
+        }
+        if (val.Length < Min)
+        {
+            return new ValidationResult("TOOOO SHORT.");
+        }
+        if (val.Trim().ToUpper().Contains(Ban.Trim().ToUpper()))
+        {
+            return new ValidationResult("INCLUDE BAN-WORD.");
+        }
+
+
+        return ValidationResult.Success;
+    }
+}
+
+
+
+
+リスト7-39
+[Msg(Min = 5, Ban = ".NET")]
+public string Message { get; set; }
+
+
+
+
+リスト7-40
+public class MsgAttribute : ValidationAttribute
+{
+    public int Min { get; set; }
+    public string Ban { get; set; }
+
+
+    protected override ValidationResult IsValid(
+            object value, ValidationContext validationContext)
+    {
+        string val = (string)value;
+
+
+        if (val == null)
+        {
+            return new ValidationResult(GetErrorMessage("NULL STRING!"));
+        }
+        if (val.Length < Min)
+        {
+            return new ValidationResult(GetErrorMessage("TOOOO SHORT."));
+        }
+        if (val.Trim().ToUpper().Contains(Ban.Trim().ToUpper()))
+        {
+            return new ValidationResult(GetErrorMessage("INCLUDE BAN-WORD."));
+        }
+
+
+        return ValidationResult.Success;
+    }
+
+
+    public string GetErrorMessage(string err)
+    {
+        return ErrorMessage != null ? ErrorMessage : err;
+    }
+}
+
+
+
+
+リスト7-41
+[Required(ErrorMessage ="必須項目です。")]
+public string Name { get; set; }
+
+
+[Msg(Min = 5, Ban = ".NET", ErrorMessage = "５文字以上で .NET を含まないメッセージが必要です。")]
+public string Message { get; set; }

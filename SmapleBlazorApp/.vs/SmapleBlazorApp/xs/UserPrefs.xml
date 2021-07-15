@@ -1,0 +1,36 @@
+﻿<Properties StartupConfiguration="{F8CE43B0-D226-46FE-8911-D98ECA8CA34A}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="SmapleBlazorApp/Pages/Sample.razor">
+    <Files>
+      <File FileName="SmapleBlazorApp/Pages/Counter.razor" Line="1" Column="1" />
+      <File FileName="SmapleBlazorApp/Program.cs" Line="1" Column="1" />
+      <File FileName="SmapleBlazorApp/App.razor" Line="10" Column="10" />
+      <File FileName="SmapleBlazorApp/Pages/Index.razor" Line="1" Column="1" />
+      <File FileName="SmapleBlazorApp/Pages/FetchData.razor" Line="1" Column="1" />
+      <File FileName="SmapleBlazorApp/Shared/MainLayout.razor" Line="1" Column="1" />
+      <File FileName="SmapleBlazorApp/Pages/Sample.razor" Line="45" Column="2" />
+      <File FileName="SmapleBlazorApp/Shared/NavMenu.razor" Line="20" Column="35" />
+      <File FileName="SmapleBlazorApp/Data/Mydata.cs" Line="24" Column="2" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="SmapleBlazorApp" expanded="True">
+            <Node name="SmapleBlazorApp" expanded="True">
+              <Node name="Data" expanded="True" />
+              <Node name="Pages" expanded="True">
+                <Node name="Sample.razor" selected="True" />
+              </Node>
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.SmapleBlazorApp PreferredExecutionTarget="/Applications/Google Chrome.app" />
+</Properties>

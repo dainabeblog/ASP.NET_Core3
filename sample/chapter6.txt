@@ -1,0 +1,556 @@
+リスト6-1
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+
+
+namespace SampleAPIApp.Models
+{
+    public class Product
+    {
+        public int ProductId { get; set; }
+        [Required]
+        public string Name { get; set; }
+        [Required]
+        [DataType(DataType.Currency)]
+        public int Price { get; set; }
+        public string description { get; set; }
+    }
+}
+
+
+
+
+リスト6-2
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddControllers();
+
+
+    services.AddDbContext<SampleAPIAppContext>
+            (options => options.UseSqlServer(
+            Configuration.GetConnectionString("SampleAPIAppContext")));
+}
+
+
+
+
+リスト6-3
+[HttpGet]
+public async Task<ActionResult<IEnumerable<Product>>> GetProduct()
+{
+    return await _context.Product.ToListAsync();
+}
+
+
+
+
+リスト6-4
+[HttpGet("{id}")]
+public async Task<ActionResult<Product>> GetProduct(int id)
+{
+    var product = await _context.Product.FindAsync(id);
+
+
+    if (product == null)
+    {
+        return NotFound();
+    }
+
+
+    return product;
+}
+
+
+
+
+リスト6-5
+[HttpPut("{id}")]
+public async Task<IActionResult> PutProduct(int id, Product product)
+{
+    if (id != product.ProductId)
+    {
+        return BadRequest();
+    }
+    _context.Entry(product).State = EntityState.Modified;
+    try
+    {
+        await _context.SaveChangesAsync();
+    }
+    catch (DbUpdateConcurrencyException)
+    {
+        if (!ProductExists(id))
+        {
+            return NotFound();
+        }
+        else
+        {
+            throw;
+        }
+    }
+    return NoContent();
+}
+
+
+
+
+リスト6-6
+[HttpPost]
+public async Task<ActionResult<Product>> PostProduct(Product product)
+{
+    _context.Product.Add(product);
+    await _context.SaveChangesAsync();
+
+
+    return CreatedAtAction("GetProduct", new { id = product.ProductId }, product);
+}
+
+
+
+
+リスト6-7
+[HttpDelete("{id}")]
+public async Task<ActionResult<Product>> DeleteProduct(int id)
+{
+    var product = await _context.Product.FindAsync(id);
+    if (product == null)
+    {
+        return NotFound();
+    }
+
+
+    _context.Product.Remove(product);
+    await _context.SaveChangesAsync();
+
+
+    return product;
+}
+
+
+
+
+リスト6-8
+public void ConfigureServices(IServiceCollection services)
+{
+    services.AddRazorPages();
+    services.AddServerSideBlazor();
+    services.AddSingleton<WeatherForecastService>();
+}
+
+
+
+
+リスト6-9
+app.UseEndpoints(endpoints =>
+{
+    endpoints.MapBlazorHub();
+    endpoints.MapFallbackToPage("/_Host");
+});
+
+
+
+
+リスト6-10
+<app>
+    @(await Html.RenderComponentAsync<App>(RenderMode.ServerPrerendered))
+</app>
+
+
+
+
+リスト6-11
+<Router AppAssembly="@typeof(Program).Assembly">
+    <Found Context="routeData">
+        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)" />
+    </Found>
+    <NotFound>
+        <LayoutView Layout="@typeof(MainLayout)">
+            <p>Sorry, there's nothing at this address.</p>
+        </LayoutView>
+    </NotFound>
+</Router>
+
+
+
+
+リスト6-12
+@inherits LayoutComponentBase
+
+
+<div class="sidebar">
+    <NavMenu />
+</div>
+
+
+<div class="main">
+    <div class="top-row px-4">
+        <a href="https://docs.microsoft.com/en-us/aspnet/" 
+                target="_blank">About</a>
+    </div>
+
+
+    <div class="content px-4">
+        @Body
+    </div>
+</div>
+
+
+
+
+リスト6-13
+@page "/counter"
+
+
+<h1>Counter</h1>
+<p>Current count: @currentCount</p>
+<button class="btn btn-primary" 
+        @onclick="IncrementCount">Click me</button>
+
+
+@code {
+    int currentCount = 0;
+
+
+    void IncrementCount()
+    {
+        currentCount++;
+    }
+}
+
+
+
+
+リスト6-14
+@page "/sample"
+
+
+<h1>Sample</h1>
+
+
+<p class="h3">Total: @total</p>
+<div class="form-row">
+    <input type="number" @bind="val" class="form-control col-9" />
+    <button @onclick="Calc" class="btn btn-primary col">Click</button>
+</div>
+
+
+@code {
+    int val = 0;
+    int total = 0;
+
+
+    void Calc()
+    {
+        total = 0;
+        for (var i = 0;i <= val;i++)
+        {
+            total += i;
+        }
+    }
+}
+
+
+
+
+リスト6-15
+<li class="nav-item px-3">
+    <NavLink class="nav-link" href="sample">
+        <span class="oi oi-badge" aria-hidden="true"></span> Sample
+    </NavLink>
+</li>
+
+
+
+
+リスト6-16
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
+
+
+namespace SampleBlazorApp.Data
+{
+    public class Mydata
+    {
+        [Required]
+        public string Name { get; set; }
+        public string Password { get; set; }
+        [EmailAddress]
+        public string Mail { get; set; }
+
+
+        public override string ToString()
+        {
+            return "[" + Name + " (" + Password + ") " + Mail + "]";
+        }
+    }
+}
+
+
+
+
+リスト6-17
+@page "/sample"
+@using SampleBlazorApp.Data
+
+
+<h1>Sample</h1>
+
+
+<p class="h3">@message</p>
+
+
+<EditForm Model="@mydata" OnValidSubmit="@doAction">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+    <div class="form-group">Name
+        <InputText id="name" @bind-Value="@mydata.Name" 
+                   class="form-control" />
+    </div>
+    <div class="form-group">Password
+        <InputText type="password" id="password" 
+                   @bind-Value="@mydata.Password" 
+                   class="form-control" />
+    </div>
+    <div class="form-group">Mail
+        <InputText id="mail" @bind-Value="@mydata.Mail" 
+                   class="form-control" />
+    </div>
+    <button type="submit" class="btn btn-primary">
+        Click</button>
+</EditForm>
+
+
+@code {
+    private Mydata mydata = new Mydata();
+    private string message = "Please input form:";
+
+
+    private void doAction()
+    {
+        message = mydata.ToString();
+    }
+}
+
+
+
+
+リスト6-18
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="theme-color" content="#000000">
+    <base href="%PUBLIC_URL%/" />
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json">
+    <link rel="shortcut icon" href="%PUBLIC_URL%/favicon.ico">
+    <title>SampleReactApp</title>
+  </head>
+  <body>
+    <noscript>
+      You need to enable JavaScript to run this app.
+    </noscript>
+    <div id="root"></div>
+  </body>
+</html>
+
+
+
+
+リスト6-19
+import 'bootstrap/dist/css/bootstrap.css';
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import registerServiceWorker from './registerServiceWorker';
+
+
+const baseUrl = document.getElementsByTagName('base')[0].getAttribute('href');
+const rootElement = document.getElementById('root');
+
+
+ReactDOM.render(
+  <BrowserRouter basename={baseUrl}>
+    <App />
+  </BrowserRouter>,
+  rootElement);
+
+
+registerServiceWorker();
+
+
+
+
+リスト6-20
+import React, { Component } from 'react';
+import { Route } from 'react-router';
+import { Layout } from './components/Layout';
+import { Home } from './components/Home';
+import { FetchData } from './components/FetchData';
+import { Counter } from './components/Counter';
+
+
+import './custom.css'
+
+
+export default class App extends Component {
+  static displayName = App.name;
+
+
+  render () {
+    return (
+      <Layout>
+        <Route exact path='/' component={Home} />
+        <Route path='/counter' component={Counter} />
+        <Route path='/fetch-data' component={FetchData} />
+      </Layout>
+    );
+  }
+}
+
+
+
+
+リスト6-21
+import React, { Component } from 'react';
+import { Container } from 'reactstrap';
+import { NavMenu } from './NavMenu';
+
+
+export class Layout extends Component {
+  static displayName = Layout.name;
+
+
+  render () {
+    return (
+      <div>
+        <NavMenu />
+        <Container>
+          {this.props.children}
+        </Container>
+      </div>
+    );
+  }
+}
+
+
+
+
+リスト6-22
+import React, { Component } from 'react';
+
+
+export class Counter extends Component {
+  static displayName = Counter.name;
+
+
+  constructor(props) {
+    super(props);
+    this.state = { currentCount: 0 };
+    this.incrementCounter = this.incrementCounter.bind(this);
+  }
+
+
+  incrementCounter() {
+    this.setState({
+      currentCount: this.state.currentCount + 1
+    });
+  }
+
+
+  render() {
+    return (
+      <div>
+        <h1>Counter</h1>
+
+
+        <p>This is a simple example of a React component.</p>
+
+
+        <p aria-live="polite">Current count: 
+                <strong>{this.state.currentCount}</strong></p>
+
+
+        <button className="btn btn-primary" 
+                onClick={this.incrementCounter}>Increment</button>
+      </div>
+    );
+  }
+}
+
+
+
+
+リスト6-23
+import React, { Component } from 'react';
+
+
+export class FetchData extends Component {
+  static displayName = FetchData.name;
+
+
+  constructor(props) {
+    super(props);
+    this.state = { forecasts: [], loading: true };
+  }
+
+
+  componentDidMount() {
+    this.populateWeatherData();
+  }
+
+
+  static renderForecastsTable(forecasts) {
+    return (
+      <table className='table table-striped' aria-labelledby="tabelLabel">
+        ……forecastsデータを元にテーブルを生成する……
+      </table>
+    );
+  }
+
+
+  render() {
+    let contents = this.state.loading
+      ? <p><em>Loading...</em></p>
+      : FetchData.renderForecastsTable(this.state.forecasts);
+
+
+    return (
+      <div>
+        <h1 id="tabelLabel" >Weather forecast</h1>
+        <p>This component demonstrates fetching data from the server.</p>
+        {contents}
+      </div>
+    );
+  }
+
+
+  async populateWeatherData() {
+    const response = await fetch('weatherforecast');
+    const data = await response.json();
+    this.setState({ forecasts: data, loading: false });
+  }
+}
+
+
+
+
+リスト6-24
+[HttpGet]
+public IEnumerable<WeatherForecast> Get()
+{
+    var rng = new Random();
+    return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+    {
+        Date = DateTime.Now.AddDays(index),
+        TemperatureC = rng.Next(-20, 55),
+        Summary = Summaries[rng.Next(Summaries.Length)]
+    })
+    .ToArray();
+}
